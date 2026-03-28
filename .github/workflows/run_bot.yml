@@ -1,0 +1,28 @@
+name: Gold Price Bot
+
+on:
+  schedule:
+    # 这里的 cron 表达式代表：周一至周五，每小时运行一次 (UTC时间)
+    # 注意：UTC 0:00 是北京时间 8:00
+    - cron: '0 1-9 * * 1-5' 
+  workflow_dispatch: # 允许你手动点击运行测试
+
+jobs:
+  build:
+    runs-init: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+
+      - name: 设置 Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 运行脚本
+        env:
+          WECHAT_WEBHOOK: ${{ secrets.WECHAT_WEBHOOK }} # 读取隐藏的变量
+        run: python main.py
